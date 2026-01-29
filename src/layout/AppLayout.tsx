@@ -8,10 +8,11 @@ import {
   BankOutlined,
   ContactsOutlined,
   FileTextOutlined,
+  MenuOutlined,
   ShoppingCartOutlined,
   TeamOutlined,
 } from '@ant-design/icons'
-import { Button, Layout, Menu, Typography, theme } from 'antd'
+import { Button, Drawer, Grid, Layout, Menu, Typography, theme } from 'antd'
 
 const { Header, Sider, Content } = Layout
 
@@ -78,49 +79,89 @@ export function AppLayout({ children }: PropsWithChildren) {
     return prefix ? [prefix.key] : [MENU_KEYS.dashboard]
   }, [location.pathname, menuItems])
 
+  const screens = Grid.useBreakpoint()
+  const isMobile = !screens.md // xs/sm
+
   const [collapsed, setCollapsed] = useState(false)
+  const [drawerOpen, setDrawerOpen] = useState(false)
+
+  const sideMenu = (
+    <Menu
+      mode="inline"
+      selectedKeys={selectedKeys}
+      items={menuItems}
+      onClick={(e) => {
+        navigate(e.key)
+        setDrawerOpen(false)
+      }}
+      style={{ borderRight: 0 }}
+    />
+  )
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
-      <Sider collapsible collapsed={collapsed} onCollapse={setCollapsed} theme="light">
-        <div
-          style={{
-            height: 56,
-            display: 'flex',
-            alignItems: 'center',
-            padding: '0 16px',
-            borderBottom: `1px solid ${token.colorBorderSecondary}`,
-          }}
+      {!isMobile ? (
+        <Sider collapsible collapsed={collapsed} onCollapse={setCollapsed} theme="light">
+          <div
+            style={{
+              height: 56,
+              display: 'flex',
+              alignItems: 'center',
+              padding: '0 16px',
+              borderBottom: `1px solid ${token.colorBorderSecondary}`,
+            }}
+          >
+            <Typography.Title level={5} style={{ margin: 0, whiteSpace: 'nowrap' }}>
+              {t('app.title')}
+            </Typography.Title>
+          </div>
+          {sideMenu}
+        </Sider>
+      ) : (
+        <Drawer
+          title={t('app.title')}
+          placement="left"
+          open={drawerOpen}
+          onClose={() => setDrawerOpen(false)}
+          bodyStyle={{ padding: 0 }}
         >
-          <Typography.Title level={5} style={{ margin: 0 }}>
-            {t('app.title')}
-          </Typography.Title>
-        </div>
-        <Menu
-          mode="inline"
-          selectedKeys={selectedKeys}
-          items={menuItems}
-          onClick={(e) => navigate(e.key)}
-          style={{ borderRight: 0 }}
-        />
-      </Sider>
+          {sideMenu}
+        </Drawer>
+      )}
+
       <Layout>
         <Header
           style={{
             background: token.colorBgContainer,
             borderBottom: `1px solid ${token.colorBorderSecondary}`,
-            padding: '0 16px',
+            padding: isMobile ? '0 12px' : '0 16px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
+            gap: 12,
           }}
         >
-          <Typography.Text type="secondary">{t('app.tagline')}</Typography.Text>
-          <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-            <LanguageSwitch />
-            <Typography.Text>
-              {t('app.user')}：{getUserDisplayName()}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 0 }}>
+            {isMobile ? (
+              <Button
+                type="text"
+                aria-label="menu"
+                icon={<MenuOutlined />}
+                onClick={() => setDrawerOpen(true)}
+              />
+            ) : null}
+            <Typography.Text type="secondary" style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              {t('app.tagline')}
             </Typography.Text>
+          </div>
+
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+            <LanguageSwitch />
+            {!isMobile ? (
+              <Typography.Text>
+                {t('app.user')}：{getUserDisplayName()}
+              </Typography.Text>
+            ) : null}
             <Button
               size="small"
               onClick={() => {
@@ -132,7 +173,8 @@ export function AppLayout({ children }: PropsWithChildren) {
             </Button>
           </div>
         </Header>
-        <Content style={{ padding: 16, background: token.colorBgLayout }}>
+
+        <Content style={{ padding: isMobile ? 12 : 16, background: token.colorBgLayout }}>
           {children}
         </Content>
       </Layout>
