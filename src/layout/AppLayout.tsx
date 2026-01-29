@@ -1,6 +1,8 @@
 import { useMemo, useState, type PropsWithChildren } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { getAuth, logout } from '../lib/auth'
+import { LanguageSwitch } from '../components/LanguageSwitch'
+import { useTranslation } from 'react-i18next'
 import {
   AppstoreOutlined,
   BankOutlined,
@@ -12,26 +14,58 @@ import { Button, Layout, Menu, Typography, theme } from 'antd'
 
 const { Header, Sider, Content } = Layout
 
-const MENU_ITEMS = [
-  { key: '/dashboard', icon: <AppstoreOutlined />, label: <Link to="/dashboard">概览</Link> },
-  { key: '/customers', icon: <ContactsOutlined />, label: <Link to="/customers">客户信息</Link> },
-  { key: '/orders', icon: <ShoppingCartOutlined />, label: <Link to="/orders">订单管理</Link> },
-  { key: '/visits', icon: <FileTextOutlined />, label: <Link to="/visits">拜访记录</Link> },
-  { key: '/finance', icon: <BankOutlined />, label: <Link to="/finance">财务记录</Link> },
-]
+const MENU_KEYS = {
+  dashboard: '/dashboard',
+  customers: '/customers',
+  orders: '/orders',
+  visits: '/visits',
+  finance: '/finance',
+} as const
 
 export function AppLayout({ children }: PropsWithChildren) {
   const { token } = theme.useToken()
   const location = useLocation()
   const navigate = useNavigate()
+  const { t } = useTranslation()
+
+  const menuItems = useMemo(
+    () => [
+      {
+        key: MENU_KEYS.dashboard,
+        icon: <AppstoreOutlined />,
+        label: <Link to={MENU_KEYS.dashboard}>{t('nav.dashboard')}</Link>,
+      },
+      {
+        key: MENU_KEYS.customers,
+        icon: <ContactsOutlined />,
+        label: <Link to={MENU_KEYS.customers}>{t('nav.customers')}</Link>,
+      },
+      {
+        key: MENU_KEYS.orders,
+        icon: <ShoppingCartOutlined />,
+        label: <Link to={MENU_KEYS.orders}>{t('nav.orders')}</Link>,
+      },
+      {
+        key: MENU_KEYS.visits,
+        icon: <FileTextOutlined />,
+        label: <Link to={MENU_KEYS.visits}>{t('nav.visits')}</Link>,
+      },
+      {
+        key: MENU_KEYS.finance,
+        icon: <BankOutlined />,
+        label: <Link to={MENU_KEYS.finance}>{t('nav.finance')}</Link>,
+      },
+    ],
+    [t],
+  )
 
   const selectedKeys = useMemo(() => {
     const path = location.pathname
-    const exact = MENU_ITEMS.find((x) => x.key === path)
+    const exact = menuItems.find((x) => x.key === path)
     if (exact) return [exact.key]
-    const prefix = MENU_ITEMS.find((x) => path.startsWith(x.key))
-    return prefix ? [prefix.key] : ['/dashboard']
-  }, [location.pathname])
+    const prefix = menuItems.find((x) => path.startsWith(x.key))
+    return prefix ? [prefix.key] : [MENU_KEYS.dashboard]
+  }, [location.pathname, menuItems])
 
   const [collapsed, setCollapsed] = useState(false)
 
@@ -48,13 +82,13 @@ export function AppLayout({ children }: PropsWithChildren) {
           }}
         >
           <Typography.Title level={5} style={{ margin: 0 }}>
-            CRM
+            {t('app.title')}
           </Typography.Title>
         </div>
         <Menu
           mode="inline"
           selectedKeys={selectedKeys}
-          items={MENU_ITEMS}
+          items={menuItems}
           onClick={(e) => navigate(e.key)}
           style={{ borderRight: 0 }}
         />
@@ -70,10 +104,11 @@ export function AppLayout({ children }: PropsWithChildren) {
             justifyContent: 'space-between',
           }}
         >
-          <Typography.Text type="secondary">TY · CRM 前端 Demo</Typography.Text>
+          <Typography.Text type="secondary">{t('app.tagline')}</Typography.Text>
           <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+            <LanguageSwitch />
             <Typography.Text>
-              用户：{getAuth()?.user ?? '未登录'}
+              {t('app.user')}：{getAuth()?.user ?? '-'}
             </Typography.Text>
             <Button
               size="small"
@@ -82,7 +117,7 @@ export function AppLayout({ children }: PropsWithChildren) {
                 navigate('/login', { replace: true })
               }}
             >
-              退出
+              {t('app.logout')}
             </Button>
           </div>
         </Header>

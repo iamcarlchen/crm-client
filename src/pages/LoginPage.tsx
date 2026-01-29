@@ -1,5 +1,6 @@
 import { Button, Card, Form, Input, Typography } from 'antd'
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { login } from '../lib/auth'
 
@@ -11,6 +12,7 @@ type LoginForm = {
 export function LoginPage() {
   const [sp] = useSearchParams()
   const navigate = useNavigate()
+  const { t } = useTranslation()
 
   const next = useMemo(() => {
     const n = sp.get('next')
@@ -37,25 +39,23 @@ export function LoginPage() {
     >
       <Card style={{ width: 420 }}>
         <Typography.Title level={3} style={{ marginTop: 0 }}>
-          登录
+          {t('login.title')}
         </Typography.Title>
-        <Typography.Paragraph type="secondary">
-          这是前端 Demo 登录页（未接后端）。随便输入账号密码即可进入。
-        </Typography.Paragraph>
+        <Typography.Paragraph type="secondary">{t('login.subtitle')}</Typography.Paragraph>
 
         <Form<LoginForm>
           layout="vertical"
           initialValues={{ user: 'Carl', password: '123456' }}
           onFinish={onFinish}
         >
-          <Form.Item name="user" label="用户名" rules={[{ required: true }]}>
-            <Input autoFocus placeholder="例如：Carl" />
+          <Form.Item name="user" label={t('login.username')} rules={[{ required: true }]}>
+            <Input autoFocus placeholder="Carl" />
           </Form.Item>
-          <Form.Item name="password" label="密码" rules={[{ required: true }]}>
-            <Input.Password placeholder="任意" />
+          <Form.Item name="password" label={t('login.password')} rules={[{ required: true }]}>
+            <Input.Password placeholder="" />
           </Form.Item>
           <Button type="primary" htmlType="submit" block>
-            登录
+            {t('login.button')}
           </Button>
         </Form>
       </Card>
