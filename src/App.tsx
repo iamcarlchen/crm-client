@@ -8,18 +8,20 @@ import { DashboardPage } from './pages/DashboardPage'
 import { LoginPage } from './pages/LoginPage'
 import { RequireAuth } from './components/RequireAuth'
 import { CrmProvider } from './store/CrmProvider'
+import { EmployeesPage } from './pages/EmployeesPage'
+import { RequireAdmin } from './components/RequireAdmin'
 
 export default function App() {
   return (
-    <CrmProvider>
-      <Routes>
-        <Route path="/" element={<Navigate to="/dashboard" replace />} />
-        <Route path="/login" element={<LoginPage />} />
+    <Routes>
+      <Route path="/" element={<Navigate to="/dashboard" replace />} />
+      <Route path="/login" element={<LoginPage />} />
 
-        <Route
-          path="/*"
-          element={
-            <RequireAuth>
+      <Route
+        path="/*"
+        element={
+          <RequireAuth>
+            <CrmProvider>
               <AppLayout>
                 <Routes>
                   <Route path="/dashboard" element={<DashboardPage />} />
@@ -27,13 +29,21 @@ export default function App() {
                   <Route path="/orders" element={<OrdersPage />} />
                   <Route path="/visits" element={<VisitsPage />} />
                   <Route path="/finance" element={<FinancePage />} />
+                  <Route
+                    path="/employees"
+                    element={
+                      <RequireAdmin>
+                        <EmployeesPage />
+                      </RequireAdmin>
+                    }
+                  />
                   <Route path="*" element={<Navigate to="/dashboard" replace />} />
                 </Routes>
               </AppLayout>
-            </RequireAuth>
-          }
-        />
-      </Routes>
-    </CrmProvider>
+            </CrmProvider>
+          </RequireAuth>
+        }
+      />
+    </Routes>
   )
 }

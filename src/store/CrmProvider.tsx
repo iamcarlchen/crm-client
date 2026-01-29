@@ -38,16 +38,21 @@ export function CrmProvider({ children }: PropsWithChildren) {
   const [finance, setFinance] = useState<FinanceRecordDto[]>([])
 
   async function refreshAll() {
-    const [c, o, v, f] = await Promise.all([
-      crmApi.customers.list(),
-      crmApi.orders.list(),
-      crmApi.visits.list(),
-      crmApi.finance.list(),
-    ])
-    setCustomers(c)
-    setOrders(o)
-    setVisits(v)
-    setFinance(f)
+    try {
+      const [c, o, v, f] = await Promise.all([
+        crmApi.customers.list(),
+        crmApi.orders.list(),
+        crmApi.visits.list(),
+        crmApi.finance.list(),
+      ])
+      setCustomers(c)
+      setOrders(o)
+      setVisits(v)
+      setFinance(f)
+    } catch {
+      // Most likely a 401 (token expired) or backend unreachable.
+      // Leave existing state as-is.
+    }
   }
 
   useEffect(() => {

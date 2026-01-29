@@ -1,5 +1,5 @@
 import { api } from './http'
-import type { CustomerDto, FinanceRecordDto, OrderDto, VisitDto } from './types'
+import type { CustomerDto, EmployeeDto, FinanceRecordDto, OrderDto, VisitDto } from './types'
 
 export const crmApi = {
   customers: {
@@ -65,5 +65,13 @@ export const crmApi = {
       },
     ) => api<FinanceRecordDto>(`/finance-records/${id}`, { method: 'PUT', json: payload }),
     remove: (id: number) => api<void>(`/finance-records/${id}`, { method: 'DELETE' }),
+  },
+  employees: {
+    list: () => api<EmployeeDto[]>('/employees'),
+    create: (payload: Omit<EmployeeDto, 'id' | 'createdAt' | 'updatedAt'>) =>
+      api<EmployeeDto>('/employees', { method: 'POST', json: payload }),
+    update: (id: number, payload: Omit<EmployeeDto, 'id' | 'createdAt' | 'updatedAt'>) =>
+      api<EmployeeDto>(`/employees/${id}`, { method: 'PUT', json: payload }),
+    remove: (id: number) => api<void>(`/employees/${id}`, { method: 'DELETE' }),
   },
 }

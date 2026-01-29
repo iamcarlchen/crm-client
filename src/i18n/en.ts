@@ -12,6 +12,7 @@ export default {
     orders: 'Orders',
     visits: 'Visits',
     finance: 'Finance',
+    employees: 'Employees',
   },
   common: {
     add: 'Add',
@@ -20,6 +21,7 @@ export default {
     save: 'Save',
     cancel: 'Cancel',
     filter: 'Filter',
+    actions: 'Actions',
     confirmDeleteTitle: 'Confirm deletion?',
   },
   dashboard: {
@@ -80,9 +82,23 @@ export default {
   },
   login: {
     title: 'Sign in',
-    subtitle: 'Demo login page (no backend). Enter any username/password.',
+    subtitle: 'Sign in with your account.',
     username: 'Username',
     password: 'Password',
     button: 'Sign in',
+    failed: 'Login failed. Please check your username/password.',
+  },
+  employees: {
+    title: 'Employees',
+    addEmployee: 'Add Employee',
+    editEmployee: 'Edit Employee',
+    name: 'Name',
+    email: 'Email',
+    phone: 'Phone',
+    role: 'Role',
+    status: 'Status',
+    updatedAt: 'Updated',
+    loadFailed: 'Failed to load employees.',
+    saveFailed: 'Failed to save employee.',
   },
 }

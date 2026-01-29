@@ -1,6 +1,6 @@
-import { useMemo, useState, type PropsWithChildren } from 'react'
+import { useMemo, useState, type PropsWithChildren, type ReactNode } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { getAuth, logout } from '../lib/auth'
+import { getUserDisplayName, isAdmin, logout } from '../lib/auth'
 import { LanguageSwitch } from '../components/LanguageSwitch'
 import { useTranslation } from 'react-i18next'
 import {
@@ -9,6 +9,7 @@ import {
   ContactsOutlined,
   FileTextOutlined,
   ShoppingCartOutlined,
+  TeamOutlined,
 } from '@ant-design/icons'
 import { Button, Layout, Menu, Typography, theme } from 'antd'
 
@@ -20,6 +21,7 @@ const MENU_KEYS = {
   orders: '/orders',
   visits: '/visits',
   finance: '/finance',
+  employees: '/employees',
 } as const
 
 export function AppLayout({ children }: PropsWithChildren) {
@@ -28,8 +30,8 @@ export function AppLayout({ children }: PropsWithChildren) {
   const navigate = useNavigate()
   const { t } = useTranslation()
 
-  const menuItems = useMemo(
-    () => [
+  const menuItems = useMemo(() => {
+    const items: { key: string; icon: ReactNode; label: ReactNode }[] = [
       {
         key: MENU_KEYS.dashboard,
         icon: <AppstoreOutlined />,
@@ -55,9 +57,18 @@ export function AppLayout({ children }: PropsWithChildren) {
         icon: <BankOutlined />,
         label: <Link to={MENU_KEYS.finance}>{t('nav.finance')}</Link>,
       },
-    ],
-    [t],
-  )
+    ]
+
+    if (isAdmin()) {
+      items.push({
+        key: MENU_KEYS.employees,
+        icon: <TeamOutlined />,
+        label: <Link to={MENU_KEYS.employees}>{t('nav.employees')}</Link>,
+      })
+    }
+
+    return items
+  }, [t])
 
   const selectedKeys = useMemo(() => {
     const path = location.pathname
@@ -108,7 +119,7 @@ export function AppLayout({ children }: PropsWithChildren) {
           <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
             <LanguageSwitch />
             <Typography.Text>
-              {t('app.user')}：{getAuth()?.user ?? '-'}
+              {t('app.user')}：{getUserDisplayName()}
             </Typography.Text>
             <Button
               size="small"

@@ -12,6 +12,7 @@ export default {
     orders: '订单管理',
     visits: '拜访记录',
     finance: '财务记录',
+    employees: '员工管理',
   },
   common: {
     add: '新增',
@@ -20,6 +21,7 @@ export default {
     save: '保存',
     cancel: '取消',
     filter: '筛选',
+    actions: '操作',
     confirmDeleteTitle: '确认删除？',
   },
   dashboard: {
@@ -80,9 +82,23 @@ export default {
   },
   login: {
     title: '登录',
-    subtitle: '这是前端 Demo 登录页（未接后端）。随便输入账号密码即可进入。',
+    subtitle: '请输入账号密码登录。',
     username: '用户名',
     password: '密码',
     button: '登录',
+    failed: '登录失败，请检查用户名/密码。',
+  },
+  employees: {
+    title: '员工管理',
+    addEmployee: '新增员工',
+    editEmployee: '编辑员工',
+    name: '姓名',
+    email: '邮箱',
+    phone: '电话',
+    role: '角色',
+    status: '状态',
+    updatedAt: '更新时间',
+    loadFailed: '员工列表加载失败。',
+    saveFailed: '员工保存失败。',
   },
 }

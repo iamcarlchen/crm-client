@@ -42,3 +42,14 @@ export type FinanceRecordDto = {
   status: string
   note?: string
 }
+
+export type EmployeeDto = {
+  id: number
+  name: string
+  email?: string
+  phone?: string
+  role?: string
+  status?: string
+  createdAt?: string
+  updatedAt?: string
+}

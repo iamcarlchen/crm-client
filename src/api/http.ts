@@ -1,3 +1,5 @@
+import { getToken, logout } from '../lib/auth'
+
 export class ApiError extends Error {
   status: number
   body: unknown
@@ -18,6 +20,9 @@ export async function api<T>(
     ...(init?.headers as any),
   }
 
+  const token = getToken()
+  if (token) headers.Authorization = `Bearer ${token}`
+
   let body: BodyInit | undefined
   if (init && 'json' in init) {
     headers['Content-Type'] = 'application/json'
@@ -34,6 +39,9 @@ export async function api<T>(
 
   const text = await res.text()
   const parsed = text ? safeJson(text) : null
+
+  // If backend says unauthorized, clear local auth state so UI can redirect.
+  if (res.status === 401) logout()
 
   if (!res.ok) throw new ApiError(res.status, parsed)
   return parsed as T
