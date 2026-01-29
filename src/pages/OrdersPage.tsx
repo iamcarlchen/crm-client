@@ -12,19 +12,18 @@ import {
   Typography,
 } from 'antd'
 import { useMemo, useState } from 'react'
-import { uid } from '../lib/id'
 import { CustomerSelect } from '../components/CustomerSelect'
 import { useCrm } from '../store/CrmProvider'
-import type { Order } from '../types'
+import type { OrderDto } from '../api/types'
 
 type OrderForm = {
-  customerId: string
+  customerId: number
   title: string
   amount: number
-  status: Order['status']
+  status: string
 }
 
-const statusColor: Record<Order['status'], string> = {
+const statusColor: Record<string, string> = {
   draft: 'default',
   confirmed: 'blue',
   delivered: 'green',
@@ -32,12 +31,12 @@ const statusColor: Record<Order['status'], string> = {
 }
 
 export function OrdersPage() {
-  const { customers, customerIndex, orders, setOrders } = useCrm()
+  const { customers, orders, createOrder, updateOrder, deleteOrder } = useCrm()
 
-  const [filterStatus, setFilterStatus] = useState<Order['status'] | 'all'>('all')
+  const [filterStatus, setFilterStatus] = useState<string | 'all'>('all')
 
   const [open, setOpen] = useState(false)
-  const [editing, setEditing] = useState<Order | null>(null)
+  const [editing, setEditing] = useState<OrderDto | null>(null)
   const [form] = Form.useForm<OrderForm>()
 
   const data = useMemo(() => {
@@ -60,13 +59,13 @@ export function OrdersPage() {
         title: '状态',
         dataIndex: 'status',
         key: 'status',
-        render: (v: Order['status']) => <Tag color={statusColor[v]}>{v}</Tag>,
+        render: (v: string) => <Tag color={statusColor[v] ?? 'default'}>{v}</Tag>,
       },
       { title: '创建日期', dataIndex: 'createdAt', key: 'createdAt' },
       {
         title: '操作',
         key: 'actions',
-        render: (_: unknown, row: Order) => (
+        render: (_: unknown, row: OrderDto) => (
           <Space>
             <Button
               size="small"
@@ -93,7 +92,7 @@ export function OrdersPage() {
                   okText: '删除',
                   okButtonProps: { danger: true },
                   cancelText: '取消',
-                  onOk: () => setOrders(orders.filter((o) => o.id !== row.id)),
+                  onOk: () => deleteOrder(row.id),
                 })
               }}
             >
@@ -103,7 +102,7 @@ export function OrdersPage() {
         ),
       },
     ],
-    [form, orders, setOrders],
+    [form, deleteOrder],
   )
 
   function resetModal() {
@@ -114,38 +113,25 @@ export function OrdersPage() {
 
   async function onSubmit() {
     const values = await form.validateFields()
-    const customer = customerIndex.get(values.customerId)
-    if (!customer) throw new Error('customer not found')
-
-    const now = new Date().toISOString().slice(0, 10)
 
     if (editing) {
-      setOrders(
-        orders.map((o) =>
-          o.id === editing.id
-            ? {
-                ...o,
-                ...values,
-                customerName: customer.name,
-              }
-            : o,
-        ),
-      )
+      await updateOrder(editing.id, {
+        customerId: values.customerId,
+        title: values.title,
+        amount: values.amount,
+        status: values.status,
+      })
       resetModal()
       return
     }
 
-    const next: Order = {
-      id: uid('o_'),
+    await createOrder({
       customerId: values.customerId,
-      customerName: customer.name,
       title: values.title,
       amount: values.amount,
       status: values.status,
-      createdAt: now,
-    }
+    })
 
-    setOrders([next, ...orders])
     resetModal()
   }
 

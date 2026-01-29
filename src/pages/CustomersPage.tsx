@@ -1,16 +1,15 @@
 import { Button, Card, Form, Input, Modal, Space, Table, Tag, Typography } from 'antd'
 import { useMemo, useState } from 'react'
-import { uid } from '../lib/id'
 import { useCrm } from '../store/CrmProvider'
-import type { Customer } from '../types'
+import type { CustomerDto } from '../api/types'
 
-type CustomerForm = Omit<Customer, 'id' | 'createdAt' | 'updatedAt'>
+type CustomerForm = Omit<CustomerDto, 'id' | 'createdAt' | 'updatedAt'>
 
 export function CustomersPage() {
-  const { customers, setCustomers } = useCrm()
+  const { customers, createCustomer, updateCustomer, deleteCustomer } = useCrm()
 
   const [open, setOpen] = useState(false)
-  const [editing, setEditing] = useState<Customer | null>(null)
+  const [editing, setEditing] = useState<CustomerDto | null>(null)
   const [form] = Form.useForm<CustomerForm>()
 
   const data = useMemo(() => customers, [customers])
@@ -23,7 +22,7 @@ export function CustomersPage() {
         title: '等级',
         dataIndex: 'level',
         key: 'level',
-        render: (v: Customer['level']) => {
+        render: (v: CustomerDto['level']) => {
           const color = v === 'A' ? 'red' : v === 'B' ? 'gold' : 'green'
           return <Tag color={color}>{v}</Tag>
         },
@@ -35,7 +34,7 @@ export function CustomersPage() {
       {
         title: '操作',
         key: 'actions',
-        render: (_: unknown, row: Customer) => (
+        render: (_: unknown, row: CustomerDto) => (
           <Space>
             <Button
               size="small"
@@ -65,7 +64,7 @@ export function CustomersPage() {
                   okText: '删除',
                   okButtonProps: { danger: true },
                   cancelText: '取消',
-                  onOk: () => setCustomers(customers.filter((c) => c.id !== row.id)),
+                  onOk: () => deleteCustomer(row.id),
                 })
               }}
             >
@@ -75,7 +74,7 @@ export function CustomersPage() {
         ),
       },
     ],
-    [customers, form, setCustomers],
+    [form, deleteCustomer],
   )
 
   function resetModal() {
@@ -86,25 +85,14 @@ export function CustomersPage() {
 
   async function onSubmit() {
     const values = await form.validateFields()
-    const now = new Date().toISOString().slice(0, 10)
 
     if (editing) {
-      setCustomers(
-        customers.map((c) =>
-          c.id === editing.id ? { ...c, ...values, updatedAt: now } : c,
-        ),
-      )
+      await updateCustomer(editing.id, values)
       resetModal()
       return
     }
 
-    const next: Customer = {
-      id: uid('c_'),
-      ...values,
-      createdAt: now,
-      updatedAt: now,
-    }
-    setCustomers([next, ...customers])
+    await createCustomer(values)
     resetModal()
   }
 

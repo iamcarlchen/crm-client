@@ -1,6 +1,6 @@
 import { Select } from 'antd'
 import { useMemo } from 'react'
-import type { Customer } from '../types'
+import type { CustomerDto } from '../api/types'
 
 export function CustomerSelect({
   customers,
@@ -9,9 +9,9 @@ export function CustomerSelect({
   allowClear,
   placeholder,
 }: {
-  customers: Customer[]
-  value?: string
-  onChange?: (v: string) => void
+  customers: CustomerDto[]
+  value?: number
+  onChange?: (v: number) => void
   allowClear?: boolean
   placeholder?: string
 }) {

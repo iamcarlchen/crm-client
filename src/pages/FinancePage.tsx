@@ -13,37 +13,36 @@ import {
 } from 'antd'
 import { useMemo, useState } from 'react'
 import { CustomerSelect } from '../components/CustomerSelect'
-import { uid } from '../lib/id'
 import { useCrm } from '../store/CrmProvider'
-import type { FinanceRecord } from '../types'
+import type { FinanceRecordDto } from '../api/types'
 
 type FinanceForm = {
-  customerId: string
-  type: FinanceRecord['type']
+  customerId: number
+  type: string
   amount: number
   date: string
-  status: FinanceRecord['status']
+  status: string
   note?: string
 }
 
-const typeColor: Record<FinanceRecord['type'], string> = {
+const typeColor: Record<string, string> = {
   invoice: 'blue',
   payment: 'green',
   refund: 'red',
 }
 
-const statusColor: Record<FinanceRecord['status'], string> = {
+const statusColor: Record<string, string> = {
   pending: 'gold',
   done: 'green',
 }
 
 export function FinancePage() {
-  const { customers, customerIndex, finance, setFinance } = useCrm()
+  const { customers, finance, createFinance, updateFinance, deleteFinance } = useCrm()
 
-  const [filterType, setFilterType] = useState<FinanceRecord['type'] | 'all'>('all')
+  const [filterType, setFilterType] = useState<string | 'all'>('all')
 
   const [open, setOpen] = useState(false)
-  const [editing, setEditing] = useState<FinanceRecord | null>(null)
+  const [editing, setEditing] = useState<FinanceRecordDto | null>(null)
   const [form] = Form.useForm<FinanceForm>()
 
   const data = useMemo(() => {
@@ -60,7 +59,7 @@ export function FinancePage() {
         title: '类型',
         dataIndex: 'type',
         key: 'type',
-        render: (v: FinanceRecord['type']) => <Tag color={typeColor[v]}>{v}</Tag>,
+        render: (v: string) => <Tag color={typeColor[v] ?? 'default'}>{v}</Tag>,
       },
       {
         title: '金额',
@@ -72,13 +71,13 @@ export function FinancePage() {
         title: '状态',
         dataIndex: 'status',
         key: 'status',
-        render: (v: FinanceRecord['status']) => <Tag color={statusColor[v]}>{v}</Tag>,
+        render: (v: string) => <Tag color={statusColor[v] ?? 'default'}>{v}</Tag>,
       },
       { title: '备注', dataIndex: 'note', key: 'note', ellipsis: true },
       {
         title: '操作',
         key: 'actions',
-        render: (_: unknown, row: FinanceRecord) => (
+        render: (_: unknown, row: FinanceRecordDto) => (
           <Space>
             <Button
               size="small"
@@ -107,7 +106,7 @@ export function FinancePage() {
                   okText: '删除',
                   okButtonProps: { danger: true },
                   cancelText: '取消',
-                  onOk: () => setFinance(finance.filter((f) => f.id !== row.id)),
+                  onOk: () => deleteFinance(row.id),
                 })
               }}
             >
@@ -117,7 +116,7 @@ export function FinancePage() {
         ),
       },
     ],
-    [finance, form, setFinance],
+    [deleteFinance, form],
   )
 
   function resetModal() {
@@ -128,37 +127,14 @@ export function FinancePage() {
 
   async function onSubmit() {
     const values = await form.validateFields()
-    const customer = customerIndex.get(values.customerId)
-    if (!customer) throw new Error('customer not found')
 
     if (editing) {
-      setFinance(
-        finance.map((r) =>
-          r.id === editing.id
-            ? {
-                ...r,
-                ...values,
-                customerName: customer.name,
-              }
-            : r,
-        ),
-      )
+      await updateFinance(editing.id, values)
       resetModal()
       return
     }
 
-    const next: FinanceRecord = {
-      id: uid('f_'),
-      customerId: values.customerId,
-      customerName: customer.name,
-      type: values.type,
-      amount: values.amount,
-      date: values.date,
-      status: values.status,
-      note: values.note,
-    }
-
-    setFinance([next, ...finance])
+    await createFinance(values)
     resetModal()
   }
 

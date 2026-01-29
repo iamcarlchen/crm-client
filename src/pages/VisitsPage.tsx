@@ -12,32 +12,31 @@ import {
 } from 'antd'
 import { useMemo, useState } from 'react'
 import { CustomerSelect } from '../components/CustomerSelect'
-import { uid } from '../lib/id'
 import { useCrm } from '../store/CrmProvider'
-import type { Visit } from '../types'
+import type { VisitDto } from '../api/types'
 
 type VisitForm = {
-  customerId: string
+  customerId: number
   date: string
-  method: Visit['method']
+  method: string
   summary: string
   nextAction?: string
   owner?: string
 }
 
-const methodColor: Record<Visit['method'], string> = {
+const methodColor: Record<string, string> = {
   call: 'blue',
   onsite: 'green',
   online: 'purple',
 }
 
 export function VisitsPage() {
-  const { customers, customerIndex, visits, setVisits } = useCrm()
+  const { customers, visits, createVisit, updateVisit, deleteVisit } = useCrm()
 
-  const [filterMethod, setFilterMethod] = useState<Visit['method'] | 'all'>('all')
+  const [filterMethod, setFilterMethod] = useState<string | 'all'>('all')
 
   const [open, setOpen] = useState(false)
-  const [editing, setEditing] = useState<Visit | null>(null)
+  const [editing, setEditing] = useState<VisitDto | null>(null)
   const [form] = Form.useForm<VisitForm>()
 
   const data = useMemo(() => {
@@ -54,25 +53,15 @@ export function VisitsPage() {
         title: '方式',
         dataIndex: 'method',
         key: 'method',
-        render: (v: Visit['method']) => <Tag color={methodColor[v]}>{v}</Tag>,
+        render: (v: string) => <Tag color={methodColor[v] ?? 'default'}>{v}</Tag>,
       },
-      {
-        title: '摘要',
-        dataIndex: 'summary',
-        key: 'summary',
-        ellipsis: true,
-      },
-      {
-        title: '下一步',
-        dataIndex: 'nextAction',
-        key: 'nextAction',
-        ellipsis: true,
-      },
+      { title: '摘要', dataIndex: 'summary', key: 'summary', ellipsis: true },
+      { title: '下一步', dataIndex: 'nextAction', key: 'nextAction', ellipsis: true },
       { title: '负责人', dataIndex: 'owner', key: 'owner' },
       {
         title: '操作',
         key: 'actions',
-        render: (_: unknown, row: Visit) => (
+        render: (_: unknown, row: VisitDto) => (
           <Space>
             <Button
               size="small"
@@ -101,7 +90,7 @@ export function VisitsPage() {
                   okText: '删除',
                   okButtonProps: { danger: true },
                   cancelText: '取消',
-                  onOk: () => setVisits(visits.filter((v) => v.id !== row.id)),
+                  onOk: () => deleteVisit(row.id),
                 })
               }}
             >
@@ -111,7 +100,7 @@ export function VisitsPage() {
         ),
       },
     ],
-    [form, setVisits, visits],
+    [deleteVisit, form],
   )
 
   function resetModal() {
@@ -122,37 +111,14 @@ export function VisitsPage() {
 
   async function onSubmit() {
     const values = await form.validateFields()
-    const customer = customerIndex.get(values.customerId)
-    if (!customer) throw new Error('customer not found')
 
     if (editing) {
-      setVisits(
-        visits.map((v) =>
-          v.id === editing.id
-            ? {
-                ...v,
-                ...values,
-                customerName: customer.name,
-              }
-            : v,
-        ),
-      )
+      await updateVisit(editing.id, values)
       resetModal()
       return
     }
 
-    const next: Visit = {
-      id: uid('v_'),
-      customerId: values.customerId,
-      customerName: customer.name,
-      date: values.date,
-      method: values.method,
-      summary: values.summary,
-      nextAction: values.nextAction,
-      owner: values.owner,
-    }
-
-    setVisits([next, ...visits])
+    await createVisit(values)
     resetModal()
   }
 
