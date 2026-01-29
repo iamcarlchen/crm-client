@@ -8,6 +8,7 @@ import {
   BankOutlined,
   ContactsOutlined,
   FileTextOutlined,
+  LineChartOutlined,
   MenuOutlined,
   ShoppingCartOutlined,
   TeamOutlined,
@@ -22,6 +23,7 @@ const MENU_KEYS = {
   orders: '/orders',
   visits: '/visits',
   finance: '/finance',
+  spot: '/spot',
   employees: '/employees',
 } as const
 
@@ -57,6 +59,11 @@ export function AppLayout({ children }: PropsWithChildren) {
         key: MENU_KEYS.finance,
         icon: <BankOutlined />,
         label: <Link to={MENU_KEYS.finance}>{t('nav.finance')}</Link>,
+      },
+      {
+        key: MENU_KEYS.spot,
+        icon: <LineChartOutlined />,
+        label: <Link to={MENU_KEYS.spot}>{t('nav.spot')}</Link>,
       },
     ]
 

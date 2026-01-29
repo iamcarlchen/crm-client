@@ -10,6 +10,7 @@ import { RequireAuth } from './components/RequireAuth'
 import { CrmProvider } from './store/CrmProvider'
 import { EmployeesPage } from './pages/EmployeesPage'
 import { RequireAdmin } from './components/RequireAdmin'
+import { SpotPage } from './pages/SpotPage'
 
 export default function App() {
   return (
@@ -29,6 +30,7 @@ export default function App() {
                   <Route path="/orders" element={<OrdersPage />} />
                   <Route path="/visits" element={<VisitsPage />} />
                   <Route path="/finance" element={<FinancePage />} />
+                  <Route path="/spot" element={<SpotPage />} />
                   <Route
                     path="/employees"
                     element={

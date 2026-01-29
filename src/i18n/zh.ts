@@ -12,6 +12,7 @@ export default {
     orders: '订单管理',
     visits: '拜访记录',
     finance: '财务记录',
+    spot: '现货交易',
     employees: '员工管理',
   },
   common: {

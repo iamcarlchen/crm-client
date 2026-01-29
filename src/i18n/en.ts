@@ -12,6 +12,7 @@ export default {
     orders: 'Orders',
     visits: 'Visits',
     finance: 'Finance',
+    spot: 'Spot Trade',
     employees: 'Employees',
   },
   common: {
