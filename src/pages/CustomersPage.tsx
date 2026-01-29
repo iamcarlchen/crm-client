@@ -1,4 +1,4 @@
-import { Button, Card, Form, Input, Modal, Space, Table, Tag, Typography } from 'antd'
+import { Button, Card, Form, Input, Modal, Select, Space, Table, Tag, Typography } from 'antd'
 import { useMemo, useState } from 'react'
 import { useCrm } from '../store/CrmProvider'
 import type { CustomerDto } from '../api/types'
@@ -84,16 +84,27 @@ export function CustomersPage() {
   }
 
   async function onSubmit() {
-    const values = await form.validateFields()
+    try {
+      const values = await form.validateFields()
 
-    if (editing) {
-      await updateCustomer(editing.id, values)
+      if (editing) {
+        await updateCustomer(editing.id, values)
+        resetModal()
+        return
+      }
+
+      await createCustomer(values)
       resetModal()
-      return
+    } catch (e: any) {
+      // If validation failed, AntD will throw; just keep modal open.
+      // If API failed, show a friendly message.
+      if (e?.status) {
+        Modal.error({
+          title: '创建/更新失败',
+          content: typeof e?.body === 'string' ? e.body : JSON.stringify(e?.body ?? e),
+        })
+      }
     }
-
-    await createCustomer(values)
-    resetModal()
   }
 
   return (
@@ -126,8 +137,22 @@ export function CustomersPage() {
           <Form.Item name="industry" label="行业">
             <Input placeholder="例如：SaaS" />
           </Form.Item>
-          <Form.Item name="level" label="等级" rules={[{ required: true }]}>
-            <Input placeholder="A/B/C" />
+          <Form.Item
+            name="level"
+            label="等级"
+            rules={[
+              { required: true, message: '请选择等级' },
+              { pattern: /^[ABC]$/, message: '等级只能是 A / B / C' },
+            ]}
+          >
+            <Select
+              placeholder="请选择 A / B / C"
+              options={[
+                { value: 'A', label: 'A' },
+                { value: 'B', label: 'B' },
+                { value: 'C', label: 'C' },
+              ]}
+            />
           </Form.Item>
           <Form.Item name="phone" label="电话">
             <Input />
