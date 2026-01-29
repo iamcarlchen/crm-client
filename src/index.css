@@ -13,3 +13,49 @@ body {
 * {
   box-sizing: border-box;
 }
+
+/* Tiptap editor basic styles */
+.crm-editor {
+  min-height: 260px;
+  outline: none;
+}
+
+.crm-editor p {
+  margin: 0 0 0.75em;
+}
+
+.crm-editor h1 {
+  font-size: 24px;
+  margin: 0.6em 0;
+}
+
+.crm-editor h2 {
+  font-size: 20px;
+  margin: 0.6em 0;
+}
+
+.crm-editor ul,
+.crm-editor ol {
+  padding-left: 1.25em;
+}
+
+.crm-editor blockquote {
+  border-left: 4px solid #e5e7eb;
+  margin: 0.5em 0;
+  padding-left: 12px;
+  color: #6b7280;
+}
+
+.crm-editor img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.crm-editor pre {
+  background: #0b1020;
+  color: #e5e7eb;
+  padding: 12px;
+  border-radius: 8px;
+  overflow: auto;
+}

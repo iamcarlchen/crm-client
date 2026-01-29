@@ -24,6 +24,7 @@ const MENU_KEYS = {
   visits: '/visits',
   finance: '/finance',
   spot: '/spot',
+  articles: '/articles',
   employees: '/employees',
 } as const
 
