@@ -1,5 +1,6 @@
 import { useMemo, useState, type PropsWithChildren } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { getAuth, logout } from '../lib/auth'
 import {
   AppstoreOutlined,
   BankOutlined,
@@ -7,7 +8,7 @@ import {
   FileTextOutlined,
   ShoppingCartOutlined,
 } from '@ant-design/icons'
-import { Layout, Menu, Typography, theme } from 'antd'
+import { Button, Layout, Menu, Typography, theme } from 'antd'
 
 const { Header, Sider, Content } = Layout
 
@@ -70,7 +71,20 @@ export function AppLayout({ children }: PropsWithChildren) {
           }}
         >
           <Typography.Text type="secondary">TY · CRM 前端 Demo</Typography.Text>
-          <Typography.Text>用户：Carl</Typography.Text>
+          <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+            <Typography.Text>
+              用户：{getAuth()?.user ?? '未登录'}
+            </Typography.Text>
+            <Button
+              size="small"
+              onClick={() => {
+                logout()
+                navigate('/login', { replace: true })
+              }}
+            >
+              退出
+            </Button>
+          </div>
         </Header>
         <Content style={{ padding: 16, background: token.colorBgLayout }}>
           {children}
