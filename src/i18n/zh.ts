@@ -30,6 +30,8 @@ export default {
     ordersCount: '订单数',
     ordersTotal: '订单总额',
     pendingInvoice: '待开票',
+    monthlyCustomerIncr: '本月客户每日增量',
+    monthlyIncome: '本月每日收入',
     recentVisits: '最近拜访（示例数据）',
     financeSummary: '财务回款（示例数据）',
     hint: '你可以新增/编辑/删除记录；当前数据保存在浏览器 localStorage。',

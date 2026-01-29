@@ -30,6 +30,8 @@ export default {
     ordersCount: 'Orders',
     ordersTotal: 'Total Order Amount',
     pendingInvoice: 'Pending Invoice',
+    monthlyCustomerIncr: 'Daily New Customers (This Month)',
+    monthlyIncome: 'Daily Income (This Month)',
     recentVisits: 'Recent Visits (sample)',
     financeSummary: 'Finance (sample)',
     hint: 'You can add/edit/delete records. Data is stored in browser localStorage.',
