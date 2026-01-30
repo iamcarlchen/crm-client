@@ -53,3 +53,16 @@ export type EmployeeDto = {
   createdAt?: string
   updatedAt?: string
 }
+
+export type NewsDto = {
+  id: number
+  title: string
+  source?: string
+  sourceUrl?: string
+  summary?: string
+  content?: string
+  status: 'DRAFT' | 'PUBLISHED'
+  publishedAt?: string
+  createdAt?: string
+  updatedAt?: string
+}

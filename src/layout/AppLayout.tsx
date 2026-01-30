@@ -10,6 +10,7 @@ import {
   FileTextOutlined,
   LineChartOutlined,
   MenuOutlined,
+  NotificationOutlined,
   ShoppingCartOutlined,
   TeamOutlined,
 } from '@ant-design/icons'
@@ -24,6 +25,7 @@ const MENU_KEYS = {
   visits: '/visits',
   finance: '/finance',
   spot: '/spot',
+  news: '/news',
   articles: '/articles',
   employees: '/employees',
 } as const
@@ -65,6 +67,11 @@ export function AppLayout({ children }: PropsWithChildren) {
         key: MENU_KEYS.spot,
         icon: <LineChartOutlined />,
         label: <Link to={MENU_KEYS.spot}>{t('nav.spot')}</Link>,
+      },
+      {
+        key: MENU_KEYS.news,
+        icon: <NotificationOutlined />,
+        label: <Link to={MENU_KEYS.news}>{t('nav.news')}</Link>,
       },
     ]
 
