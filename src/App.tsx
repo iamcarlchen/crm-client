@@ -13,6 +13,7 @@ import { RequireAdmin } from './components/RequireAdmin'
 import { SpotPage } from './pages/SpotPage'
 import { ArticlesPage } from './pages/ArticlesPage'
 import { NewsPage } from './pages/NewsPage'
+import { BannersPage } from './pages/BannersPage'
 
 export default function App() {
   return (
@@ -34,6 +35,7 @@ export default function App() {
                   <Route path="/finance" element={<FinancePage />} />
                   <Route path="/spot" element={<SpotPage />} />
                   <Route path="/news" element={<NewsPage />} />
+                  <Route path="/banners" element={<BannersPage />} />
                   <Route path="/articles" element={<ArticlesPage />} />
                   <Route
                     path="/employees"

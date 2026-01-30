@@ -66,3 +66,19 @@ export type NewsDto = {
   createdAt?: string
   updatedAt?: string
 }
+
+export type BannerDto = {
+  id: number
+  name: string
+  position: string
+  status: 'DRAFT' | 'ONLINE' | 'OFFLINE'
+  imageUrl?: string
+  linkUrl?: string
+  locale?: string
+  startAt?: string
+  endAt?: string
+  createdBy?: string
+  updatedBy?: string
+  createdAt?: string
+  updatedAt?: string
+}

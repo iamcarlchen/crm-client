@@ -1,5 +1,5 @@
 import { api } from './http'
-import type { CustomerDto, EmployeeDto, FinanceRecordDto, NewsDto, OrderDto, VisitDto } from './types'
+import type { BannerDto, CustomerDto, EmployeeDto, FinanceRecordDto, NewsDto, OrderDto, VisitDto } from './types'
 
 export const crmApi = {
   customers: {
@@ -82,5 +82,19 @@ export const crmApi = {
     update: (id: number, payload: Omit<NewsDto, 'id' | 'createdAt' | 'updatedAt'>) =>
       api<NewsDto>(`/news/${id}`, { method: 'PUT', json: payload }),
     remove: (id: number) => api<void>(`/news/${id}`, { method: 'DELETE' }),
+  },
+  banners: {
+    list: (params?: { status?: string; position?: string }) => {
+      const qs = new URLSearchParams()
+      if (params?.status) qs.set('status', params.status)
+      if (params?.position) qs.set('position', params.position)
+      const suffix = qs.toString()
+      return api<BannerDto[]>(suffix ? `/banners?${suffix}` : '/banners')
+    },
+    create: (payload: Omit<BannerDto, 'id' | 'createdAt' | 'updatedAt'>) =>
+      api<BannerDto>('/banners', { method: 'POST', json: payload }),
+    update: (id: number, payload: Omit<BannerDto, 'id' | 'createdAt' | 'updatedAt'>) =>
+      api<BannerDto>(`/banners/${id}`, { method: 'PUT', json: payload }),
+    remove: (id: number) => api<void>(`/banners/${id}`, { method: 'DELETE' }),
   },
 }

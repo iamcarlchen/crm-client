@@ -26,6 +26,7 @@ const MENU_KEYS = {
   finance: '/finance',
   spot: '/spot',
   news: '/news',
+  banners: '/banners',
   articles: '/articles',
   employees: '/employees',
 } as const
@@ -72,6 +73,11 @@ export function AppLayout({ children }: PropsWithChildren) {
         key: MENU_KEYS.news,
         icon: <NotificationOutlined />,
         label: <Link to={MENU_KEYS.news}>{t('nav.news')}</Link>,
+      },
+      {
+        key: MENU_KEYS.banners,
+        icon: <NotificationOutlined />,
+        label: <Link to={MENU_KEYS.banners}>{t('nav.banners')}</Link>,
       },
     ]
 
